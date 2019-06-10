@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.coppermobile.mydagger2sample.adapter.RandomUserAdapter;
-import com.coppermobile.mydagger2sample.component.DaggerRandomUserComponent;
-import com.coppermobile.mydagger2sample.component.RandomUserComponent;
+import com.coppermobile.mydagger2sample.application.RandomUserApplication;
 import com.coppermobile.mydagger2sample.interfaces.RandomUsersApi;
+import com.coppermobile.mydagger2sample.mainactivityfeature.DaggerMainActivityComponent;
+import com.coppermobile.mydagger2sample.mainactivityfeature.MainActivityComponent;
 import com.coppermobile.mydagger2sample.model.RandomUsers;
-import com.coppermobile.mydagger2sample.module.ContextModule;
-import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,9 +24,12 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private RandomUserAdapter mAdapter;
-    private Picasso picasso;
-    private RandomUsersApi randomUsersApi;
+
+    @Inject
+    RandomUserAdapter mAdapter;
+
+    @Inject
+    RandomUsersApi randomUsersApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +40,19 @@ public class MainActivity extends AppCompatActivity {
 
         Timber.plant(new Timber.DebugTree());
 
-        RandomUserComponent randomUserComponent = DaggerRandomUserComponent.builder()
-                .contextModule(new ContextModule(this))
+//        RandomUserComponent randomUserComponent = DaggerRandomUserComponent.builder()
+//                .contextModule(new ContextModule(this))
+//                .build();
+//        picasso = randomUserComponent.getPicasso();
+//        randomUsersApi = randomUserComponent.getRandomUserService();
+
+        MainActivityComponent mainActivityComponent = DaggerMainActivityComponent.builder()
+                .randomUserComponent(RandomUserApplication.get(this).getRandomUserApplicationComponent())
                 .build();
-        picasso = randomUserComponent.getPicasso();
-        randomUsersApi = randomUserComponent.getRandomUserService();
+//        randomUsersApi = mainActivityComponent.getRandomUserService();
+//        mAdapter = mainActivityComponent.getRandomUserAdapter();
+
+        mainActivityComponent.injectMainActivity(this);
 
         populateUsers();
     }
@@ -56,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<RandomUsers> call, @NonNull Response<RandomUsers> response) {
                 if (response.isSuccessful()) {
-                    mAdapter = new RandomUserAdapter(picasso);
                     mAdapter.setItems(response.body().getResults());
                     recyclerView.setAdapter(mAdapter);
                 }

@@ -20,7 +20,6 @@ public class RandomUserAdapter extends RecyclerView.Adapter<RandomUserAdapter.Ra
     private final Picasso picasso;
     private List<Result> resultList = new ArrayList<>();
 
-
     public RandomUserAdapter(Picasso picasso) {
         this.picasso = picasso;
     }
@@ -52,11 +51,11 @@ public class RandomUserAdapter extends RecyclerView.Adapter<RandomUserAdapter.Ra
         notifyDataSetChanged();
     }
 
-    public class RandomUserViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ImageView imageView;
+    class RandomUserViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+        ImageView imageView;
 
-        public RandomUserViewHolder(View itemView) {
+        RandomUserViewHolder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.name);
             imageView = itemView.findViewById(R.id.image);

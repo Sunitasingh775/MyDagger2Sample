@@ -16,3 +16,4 @@ public interface RandomUserComponent {
 
     Picasso getPicasso();
 }
+//Application Scope
